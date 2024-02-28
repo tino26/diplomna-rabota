@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Diplomen Proekt</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="log_in">Log in</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="or">OR CONNECT WITH</string>
+    <string name="sign_in">Sign in</string>
+
+    <string name="facebook_app_id">526498191468722</string>
+    <string name="fb_login_protocol_scheme">fb526498191468722</string>
+</resources>
