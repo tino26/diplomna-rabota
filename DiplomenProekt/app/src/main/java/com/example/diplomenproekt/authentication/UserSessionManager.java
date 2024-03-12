@@ -2,6 +2,10 @@ package com.example.diplomenproekt.authentication;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import java.util.HashMap;
 
@@ -22,9 +26,12 @@ public class UserSessionManager {
 
     public void createUserLoginSession(String paramString1, String paramString2)
     {
+        Date loggedInTime = Calendar.getInstance().getTime();
+        Log.d("Logged Time", loggedInTime.toString());
         this.editor.putBoolean("IsUserLoggedIn", true);
         this.editor.putString("name", paramString1);
         this.editor.putString("email", paramString2);
+//        editor.putLong("session_timeout", loggedInTime.);
         this.editor.commit();
     }
 
@@ -42,5 +49,8 @@ public class UserSessionManager {
     }
 
     public void logoutUser()
-    {}
+    {
+        this.editor.clear();
+        this.editor.apply();
+    }
 }

@@ -3,7 +3,6 @@ package com.example.diplomenproekt.authentication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,21 +16,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class EmailAuthActivity {
+    UserSessionManager session;
+
     private static final String TAG = "EmailPassword";
     // [START declare_auth]
     private FirebaseAuth mAuth;
-
-    // creating constant keys for shared preferences.
-    public static final String SHARED_PREFS = "shared_prefs";
-
-    // key for storing email.
-    public static final String EMAIL_KEY = "email_key";
-
-    // key for storing password.
-    public static final String PASSWORD_KEY = "password_key";
-    SharedPreferences sharedpreferences;
-    String email, password;
-    // [END declare_auth]
 
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +68,7 @@ public class EmailAuthActivity {
     }
 
     public void signIn(String email, String password, Context context) {
-        sharedpreferences = context.getApplicationContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-
+        session = new UserSessionManager(context);
         // [START sign_in_with_email]
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password)
@@ -92,6 +80,8 @@ public class EmailAuthActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            session.createUserLoginSession(email, password);
+                            Log.d("preference", session.getUserDetails().toString());
                             Intent intent = new Intent(context, MainActivity.class);
                             context.startActivity(intent);
                         } else {
@@ -99,16 +89,6 @@ public class EmailAuthActivity {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
                             updateUI(null);
-                            SharedPreferences.Editor editor = sharedpreferences.edit();
-
-                            // below two lines will put values for
-                            // email and password in shared preferences.
-                            editor.putString(EMAIL_KEY, email);
-                            editor.putString(PASSWORD_KEY, password);
-
-                            // to save our data with key and value.
-                            editor.apply();
-//                            Log.d("preference", sharedpreferences.getString("EMAIL_KEY", null).toString());
                         }
                     }
                 });
