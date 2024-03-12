@@ -1,7 +1,6 @@
 package com.example.diplomenproekt.ui.login;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +12,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.diplomenproekt.R;
-import com.example.diplomenproekt.databinding.FragmentLoginBinding;
-
 import com.example.diplomenproekt.authentication.EmailAuthActivity;
+import com.example.diplomenproekt.databinding.FragmentLoginBinding;
 
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
-//    private EmailAuthActivity authActivity;
+    private EmailAuthActivity authActivity = new EmailAuthActivity();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         LoginViewModel loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
@@ -33,9 +31,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 EditText email = (EditText)root.findViewById(R.id.etEmail);
                 EditText password = (EditText)root.findViewById(R.id.etPassword);
-                Log.d("EMAIL", email.getText().toString());
-                Log.d("PASS", password.getText().toString());
-                ((EmailAuthActivity) getActivity()).signIn(email.getText().toString(), password.getText().toString());
+                authActivity.signIn(email.getText().toString(), password.getText().toString(), inflater.getContext());
             }
         });
 
