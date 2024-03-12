@@ -29,8 +29,8 @@ public class LoginFragment extends Fragment {
         login_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                EditText email = (EditText)root.findViewById(R.id.etEmail);
-                EditText password = (EditText)root.findViewById(R.id.etPassword);
+                EditText email = (EditText)root.findViewById(R.id.loginEmail);
+                EditText password = (EditText)root.findViewById(R.id.loginPassword);
                 authActivity.signIn(email.getText().toString(), password.getText().toString(), inflater.getContext());
             }
         });
