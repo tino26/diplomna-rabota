@@ -1,6 +1,5 @@
 package com.example.diplomenproekt.ui.login;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.diplomenproekt.R;
@@ -20,7 +20,7 @@ import com.example.diplomenproekt.ui.register.RegisterFragment;
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
     private EmailAuthActivity authActivity = new EmailAuthActivity();
-    FragmentManager fm = getActivity().getFragmentManager();
+    FragmentManager fm = getActivity().getSupportFragmentManager();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RegisterFragment regFragment = (RegisterFragment) fm.getFragments();
