@@ -16,8 +16,6 @@ import com.google.firebase.firestore.MemoryCacheSettings;
 import com.google.firebase.firestore.PersistentCacheSettings;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FirestoreHandler {
     private final FirebaseFirestore db;
@@ -56,23 +54,10 @@ public class FirestoreHandler {
         // [END fs_setup_cache]
     }
 
-    public void addDevice(int user_id, int device_id, String device_mac_address, String device_name, boolean current_state, List<Integer> current_color) {
-        // [START add_ada_lovelace]
-        // Create a new user with a first and last name
-        Map<String, Object> item = new HashMap<>();
-        item.put("user_id", user_id);
-        item.put("device_mac_address", device_mac_address);
-        item.put("device_name", device_name);
-        item.put("current_state", current_state);
-        item.put("current_state", current_state);
-        item.put("current_state", current_state);
-        item.put("current_state", current_state);
-        item.put("current_state", current_state);
-        item.put("current_color", current_color);
-
-        // Add a new document with a generated ID
+    // int user_id, int device_id, String device_mac_address, String device_name, boolean current_state, List<Integer> current_color
+    public void addDevice(HashMap<String, Object> itemData) {
         db.collection("devices")
-                .add(item)
+                .add(itemData)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
@@ -85,7 +70,28 @@ public class FirestoreHandler {
                         Log.w("error adding device", "Error adding document", e);
                     }
                 });
-        // [END add_ada_lovelace]
+    }
+
+    public void updateDevice(String device_id, HashMap<String, Object> itemNewData) {
+        // [START update_document]
+        DocumentReference device_reference = db.collection("devices").document(device_id);
+
+        // Set the "isCapital" field of the city 'DC'
+        device_reference
+                .update(itemNewData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("documen", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Err updating device", "Error updating document", e);
+                    }
+                });
+        // [END update_document]
     }
 
     public void getDevice(String device_id) {
