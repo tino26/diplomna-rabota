@@ -10,6 +10,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.diplomenproekt.R;
@@ -20,11 +21,10 @@ import com.example.diplomenproekt.ui.register.RegisterFragment;
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
     private EmailAuthActivity authActivity = new EmailAuthActivity();
-    FragmentManager fm = getActivity().getSupportFragmentManager();
+    FragmentManager fm;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RegisterFragment regFragment = (RegisterFragment) fm.getFragments();
-        regFragment.getView().setVisibility(View.VISIBLE);
+        fm = getActivity().getSupportFragmentManager();
 
         LoginViewModel loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
@@ -45,10 +45,11 @@ public class LoginFragment extends Fragment {
         register_redirect_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                LoginFragment loginFragment = (LoginFragment) fm.getFragments();
-                loginFragment.getView().setVisibility(View.INVISIBLE);
-                RegisterFragment regFragment = (RegisterFragment) fm.getFragments();
-                regFragment.getView().setVisibility(View.VISIBLE);
+                RegisterFragment fragment = new RegisterFragment();
+                FragmentTransaction transaction = fm.beginTransaction();
+                transaction.replace(R.id.login_fragment_container_view, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 

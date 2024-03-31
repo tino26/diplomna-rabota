@@ -10,11 +10,4 @@
         android:layout_height="match_parent"
         android:name="com.example.diplomenproekt.ui.login.LoginFragment" />
 
-    <androidx.fragment.app.FragmentContainerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/register_fragment_container_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.example.diplomenproekt.ui.register.RegisterFragment" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
