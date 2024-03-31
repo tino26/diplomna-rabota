@@ -12,5 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="backgroundColor">@color/background_color_reverse</item>
+        <item name="cardBackgroundColor">@color/card_background_color_reverse</item>
     </style>
 </resources>
