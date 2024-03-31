@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class EmailAuthActivity {
     UserSessionManager session;
@@ -44,7 +45,7 @@ public class EmailAuthActivity {
 //    }
     // [END on_start_check_user]
 
-    private void createAccount(String email, String password, Context context) {
+    public void createAccount(String display_name, String email, String password, Context context) {
         // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
@@ -55,6 +56,13 @@ public class EmailAuthActivity {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(display_name)
+                                    .build();
+                            session.createUserLoginSession(email, password);
+                            Log.d("preference", session.getUserDetails().toString());
+                            Intent intent = new Intent(context, MainActivity.class);
+                            context.startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());

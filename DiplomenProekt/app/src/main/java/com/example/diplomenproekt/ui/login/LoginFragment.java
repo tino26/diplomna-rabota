@@ -1,5 +1,6 @@
 package com.example.diplomenproekt.ui.login;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,17 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.diplomenproekt.R;
 import com.example.diplomenproekt.authentication.EmailAuthActivity;
 import com.example.diplomenproekt.databinding.FragmentLoginBinding;
+import com.example.diplomenproekt.ui.register.RegisterFragment;
 
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
     private EmailAuthActivity authActivity = new EmailAuthActivity();
+    FragmentManager fm = getActivity().getFragmentManager();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        RegisterFragment regFragment = (RegisterFragment) fm.getFragments();
+        regFragment.getView().setVisibility(View.VISIBLE);
+
         LoginViewModel loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
         binding = FragmentLoginBinding.inflate(inflater, container, false);
@@ -32,6 +38,17 @@ public class LoginFragment extends Fragment {
                 EditText email = (EditText)root.findViewById(R.id.loginEmail);
                 EditText password = (EditText)root.findViewById(R.id.loginPassword);
                 authActivity.signIn(email.getText().toString(), password.getText().toString(), inflater.getContext());
+            }
+        });
+
+        Button register_redirect_btn = (Button)root.findViewById(R.id.registerRedirectBtn);
+        register_redirect_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                LoginFragment loginFragment = (LoginFragment) fm.getFragments();
+                loginFragment.getView().setVisibility(View.INVISIBLE);
+                RegisterFragment regFragment = (RegisterFragment) fm.getFragments();
+                regFragment.getView().setVisibility(View.VISIBLE);
             }
         });
 
