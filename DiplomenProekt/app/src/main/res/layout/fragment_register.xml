@@ -35,7 +35,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/sign_in"
+        android:text="@string/register"
         android:textColor="@color/colorAccent"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -44,14 +44,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/registrationEmail"
+        android:id="@+id/registrationFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginVertical="20dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/rounded_border"
-        android:hint="@string/email"
+        android:hint="First Name"
         android:imeOptions="actionNext"
         android:inputType="textEmailAddress"
         android:textColor="@color/background_color_reverse"
@@ -62,11 +62,47 @@
         app:layout_constraintTop_toBottomOf="@id/textView" />
 
     <EditText
+        android:id="@+id/registrationLastName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginVertical="20dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/rounded_border"
+        android:hint="Last Name"
+        android:imeOptions="actionNext"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/background_color_reverse"
+        android:textColorHint="@color/background_color_reverse"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/registrationFirstName" />
+
+    <EditText
+        android:id="@+id/registrationEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginVertical="20dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/rounded_border"
+        android:hint="@string/email"
+        android:imeOptions="actionNext"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/background_color_reverse"
+        android:textColorHint="@color/background_color_reverse"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/registrationLastName" />
+
+    <EditText
         android:id="@+id/registrationPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginVertical="20dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/rounded_border"
         android:hint="@string/password"
@@ -80,7 +116,7 @@
         app:layout_constraintTop_toBottomOf="@id/registrationEmail" />
 
     <TextView
-        android:id="@+id/loginError"
+        android:id="@+id/registerError"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -108,7 +144,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loginError" />
+        app:layout_constraintTop_toBottomOf="@id/registerError" />
 
     <TextView
         android:id="@+id/tvOr"
