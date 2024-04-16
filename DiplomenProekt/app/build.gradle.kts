@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation("com.github.rtugeek:colorseekbar:2.1.0")
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
