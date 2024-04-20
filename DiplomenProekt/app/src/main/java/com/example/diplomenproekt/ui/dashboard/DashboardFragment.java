@@ -13,10 +13,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.diplomenproekt.R;
 import com.example.diplomenproekt.authentication.UserSessionManager;
 import com.example.diplomenproekt.databinding.FragmentDashboardBinding;
+import com.example.diplomenproekt.bluetooth.FindBLEdevice;
 
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
+    private FindBLEdevice findBLEdevice;
 
     UserSessionManager session;
 
@@ -27,16 +29,17 @@ public class DashboardFragment extends Fragment {
                 new ViewModelProvider(this).get(DashboardViewModel.class);
 
         session = new UserSessionManager(getContext());
-
+        findBLEdevice = new FindBLEdevice();
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        Button logout_button = (Button) root.findViewById(R.id.logout_button);
+        Button scan_button = (Button) root.findViewById(R.id.scan_button);
 
-        logout_button.setOnClickListener(new View.OnClickListener(){
+        scan_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                session.logoutUser();
+//                session.logoutUser();
+                findBLEdevice.scanLeDevice(getContext());
             }
         });
 
