@@ -12,7 +12,14 @@
         android:layout_height="wrap_content"
         android:text="Scan"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="341dp"></Button>
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="16dp"></Button>
+
+    <ListView
+        android:id="@+id/available_new_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/scan_button"></ListView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

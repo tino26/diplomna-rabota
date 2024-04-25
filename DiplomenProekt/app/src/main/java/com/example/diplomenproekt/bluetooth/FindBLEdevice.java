@@ -1,15 +1,22 @@
 package com.example.diplomenproekt.bluetooth;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
+import android.widget.ListView;
 
 import androidx.core.app.ActivityCompat;
+
+import com.example.diplomenproekt.MainActivity;
+
+import java.util.Objects;
 
 public class FindBLEdevice {
 
@@ -19,25 +26,28 @@ public class FindBLEdevice {
     private boolean scanning;
     private Handler handler = new Handler();
 
+    private LeDeviceListAdapter leDeviceListAdapter;
+
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
 
-    public void scanLeDevice(Context context) {
+    public void scanLeDevice(Activity activity, Context context, ListView availableDevicesListView) {
+        leDeviceListAdapter = new LeDeviceListAdapter(activity);
+        availableDevicesListView.setAdapter(leDeviceListAdapter);
         ScanCallback leScanCallback = new ScanCallback() {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
+//                super.onScanResult(callbackType, result);
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
+                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 0);
                 }
+
                 System.out.println(result.getDevice().getName());
-//                Log.d("Scan Results", String.valueOf(result));
+
+                if(Objects.equals(result.getDevice().getName(), "ESP32 LightHouse")) {
+                    leDeviceListAdapter.addDevice(result.getDevice());
+                    leDeviceListAdapter.notifyDataSetChanged();
+                }
             }
         };
         if (!scanning) {
@@ -47,14 +57,7 @@ public class FindBLEdevice {
                 public void run() {
                     scanning = false;
                     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
+                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 0);
                     }
                     bluetoothLeScanner.stopScan(leScanCallback);
                 }
@@ -62,14 +65,8 @@ public class FindBLEdevice {
 
             scanning = true;
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 0);
+
             }
             bluetoothLeScanner.startScan(leScanCallback);
         } else {
