@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "703342367199",
+    "project_id": "diplomen-f95de",
+    "storage_bucket": "diplomen-f95de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703342367199:android:b83e84b399ad22d26df46a",
+        "android_client_info": {
+          "package_name": "com.example.diplomenproekt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "703342367199-rg21ollo310ul8kkas5ntcq8l8kfirsb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.diplomenproekt",
+            "certificate_hash": "f5f09a99733324b5ec374b30d61cc8f82a3cee8a"
+          }
+        },
+        {
+          "client_id": "703342367199-1e8sphpm753100bvstu17ug9p15tjcgv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHqHDfJvj-PT8yL9iDYmieRCREffiDv8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "703342367199-1e8sphpm753100bvstu17ug9p15tjcgv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
