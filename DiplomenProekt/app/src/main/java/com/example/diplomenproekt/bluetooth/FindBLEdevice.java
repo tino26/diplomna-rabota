@@ -44,10 +44,10 @@ public class FindBLEdevice {
 
                 System.out.println(result.getDevice().getName());
 
-                if(Objects.equals(result.getDevice().getName(), "ESP32 LightHouse")) {
+//                if(Objects.equals(result.getDevice().getName(), "ESP32 LightHouse")) {
                     leDeviceListAdapter.addDevice(result.getDevice());
                     leDeviceListAdapter.notifyDataSetChanged();
-                }
+//                }
             }
         };
         if (!scanning) {
