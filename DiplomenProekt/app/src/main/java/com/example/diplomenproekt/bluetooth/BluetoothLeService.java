@@ -1,6 +1,7 @@
 package com.example.diplomenproekt.bluetooth;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -14,10 +15,16 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
+
+import com.example.diplomenproekt.DeviceControlActivity;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -137,6 +144,20 @@ public class BluetoothLeService extends Service {
             }
         }
         sendBroadcast(intent);
+    }
+
+    public void WriteCharacteristic(BluetoothGattCharacteristic characteristic, String newCharValue) {
+        characteristic.setValue(newCharValue);
+//        characteristic.setWriteType();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+              ActivityCompat.requestPermissions(new DeviceControlActivity(), new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 0);
+        }
+        if (!mBluetoothGatt.writeCharacteristic(characteristic)) {
+            Log.e(TAG, String.format("ERROR: writeCharacteristic failed for characteristic: %s", characteristic.getUuid()));
+        } else {
+            Log.d(TAG, String.format("writing <%s> to characteristic <%s>", newCharValue, characteristic.getUuid()));
+        }
     }
 
     public class LocalBinder extends Binder {

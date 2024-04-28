@@ -9,6 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -17,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
@@ -24,10 +28,15 @@ import androidx.annotation.RequiresApi;
 
 import com.example.diplomenproekt.bluetooth.BluetoothLeService;
 import com.example.diplomenproekt.bluetooth.SampleGattAttributes;
+import com.rtugeek.android.colorseekbar.ColorSeekBar;
+import com.rtugeek.android.colorseekbar.OnColorChangeListener;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -52,8 +61,16 @@ public class DeviceControlActivity extends Activity {
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
 
+    private BluetoothGattCharacteristic mStateCharacteristic;
+    private BluetoothGattCharacteristic mColorCharacteristic;
+
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
+
+    public final static UUID LIGHTSOURCE_STATE =
+            UUID.fromString(SampleGattAttributes.LIGHTSOURCE_STATE);
+    public final static UUID LIGHTSOURCE_COLOR =
+            UUID.fromString(SampleGattAttributes.LIGHTSOURCE_COLOR);
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -141,6 +158,22 @@ public class DeviceControlActivity extends Activity {
                 }
             };
 
+    private final View.OnClickListener powerButtonClickListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    String stateVal = mStateCharacteristic.getStringValue(0);
+//                    String newValue = "";
+//                    if(stateVal.equals("off")){
+//                        stateVal = "on";
+//                    }else if(stateVal.equals("on")){
+//                        stateVal = "off";
+//                    }
+//                    mBluetoothLeService.WriteCharacteristic(mStateCharacteristic, stateVal);
+//                    Log.d("CharacteristicsList", mStateCharacteristic.getStringValue(0));
+                }
+            };
+
     private void clearUI() {
         mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
         mDataField.setText(R.string.no_data);
@@ -164,13 +197,30 @@ public class DeviceControlActivity extends Activity {
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
+        ImageButton powerButton = (ImageButton) findViewById(R.id.device_power_button);
+        powerButton.setOnClickListener(powerButtonClickListener);
+
+        ColorSeekBar colorSeekBar = findViewById(R.id.color_seek_bar);
+
+        colorSeekBar.setOnColorChangeListener(new OnColorChangeListener() {
+            @Override
+            public void onColorChangeListener(int progress, int color) {
+                int currentRed = Color.red(color);
+                int currentGreen = Color.green(color);
+                int currentBlue = Color.blue(color);
+//                String outputColor = currentRed + "," + currentGreen + "," + currentBlue;
+//                int outputColor = currentRed;
+//                outputColor = (outputColor << 8) + currentGreen;
+//                outputColor = (outputColor << 8) + currentBlue;
+                byte[] bytes = ByteBuffer.allocate(4).putInt(color).array();
+                mBluetoothLeService.WriteCharacteristic(mColorCharacteristic, String.valueOf(color));
+            }
+        });
 
 //        getActionBar().setTitle(mDeviceName);
 //        getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        Log.d(TAG, "Before Service Bind");
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        Log.d(TAG, "After Service Bind");
     }
 
 
@@ -274,6 +324,14 @@ public class DeviceControlActivity extends Activity {
 
             // Loops through available Characteristics.
             for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                if(gattCharacteristic.getUuid().equals(LIGHTSOURCE_STATE)){
+                    mStateCharacteristic = gattCharacteristic;
+                }
+
+                if(gattCharacteristic.getUuid().equals(LIGHTSOURCE_COLOR)){
+                    mColorCharacteristic = gattCharacteristic;
+                }
+
                 charas.add(gattCharacteristic);
 //                gattCharacteristic.getDescriptors();
                 HashMap<String, String> currentCharaData = new HashMap<String, String>();
@@ -297,7 +355,7 @@ public class DeviceControlActivity extends Activity {
                 new String[] {LIST_NAME, LIST_UUID},
                 new int[] { android.R.id.text1, android.R.id.text2 }
         );
-        mGattServicesList.setAdapter(gattServiceAdapter);
+//        mGattServicesList.setAdapter(gattServiceAdapter);
     }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
