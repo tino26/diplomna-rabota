@@ -11,14 +11,24 @@
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
 
+#define RED_PIN 19
+#define GREEN_PIN 21
+#define BLUE_PIN 18
+
 #define bleServerName "ESP32 LightHouse"
 #define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
-#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define CHARACTERISTIC_STATE_UUID "93758842-6624-49aa-a286-abdfff1f4efa"
+#define CHARACTERISTIC_CURRENT_COLOR_UUID "8c25e317-ac1a-47ee-bedc-53c6241487c2"
 
-BLECharacteristic rgbStripStateCharacteristics("ca73b3ba-39f6-4ab3-91ae-186dc9577d99", BLECharacteristic::PROPERTY_NOTIFY);
+BLECharacteristic rgbStripStateCharacteristics(CHARACTERISTIC_STATE_UUID, BLECharacteristic::PROPERTY_NOTIFY);
 BLEDescriptor rgbStripStateDescriptor(BLEUUID((uint16_t)0x2903));
 
+BLECharacteristic rgbStripCurrentColorCharacteristics(CHARACTERISTIC_CURRENT_COLOR_UUID, BLECharacteristic::PROPERTY_NOTIFY);
+BLEDescriptor rgbStripCurrentColorDescriptor(BLEUUID((uint16_t)0x2903));
+
 bool deviceConnected = false;
+
+bool loopStarted = false;
 
 class MyServerCallbacks: public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) {
@@ -30,6 +40,10 @@ class MyServerCallbacks: public BLEServerCallbacks {
 };
 
 void setup() {
+  pinMode(REDPIN, OUTPUT);
+  pinMode(GREENPIN, OUTPUT);
+  pinMode(BLUEPIN, OUTPUT);
+
   Serial.begin(115200);
   Serial.println("Starting BLE work!");
 
@@ -37,18 +51,19 @@ void setup() {
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
   BLEService *pService = pServer->createService(SERVICE_UUID);
-  // BLECharacteristic *pCharacteristic = pService->createCharacteristic(
-  //                                        CHARACTERISTIC_UUID,
-  //                                        BLECharacteristic::PROPERTY_READ |
-  //                                        BLECharacteristic::PROPERTY_WRITE
-  //                                      );
-
   // pCharacteristic->setValue("Hello World says Neil");
 
+  //STATE
   pService->addCharacteristic(&rgbStripStateCharacteristics);
-  rgbStripStateDescriptor.setValue("BME humidity");
+  rgbStripStateDescriptor.setValue("Current State");
   // bmeHumidityCharacteristics.addDescriptor(new BLE2902());
   rgbStripStateCharacteristics.addDescriptor(&rgbStripStateDescriptor);
+
+  //COLOR
+  pService->addCharacteristic(&rgbStripCurrentColorCharacteristics);
+  rgbStripCurrentColorDescriptor.setValue("Current Color");
+  // bmeHumidityCharacteristics.addDescriptor(new BLE2902());
+  rgbStripCurrentColorCharacteristics.addDescriptor(&rgbStripCurrentColorDescriptor);
 
   pService->start();
   // BLEAdvertising *pAdvertising = pServer->getAdvertising();  // this still is working for backward compatibility
@@ -64,8 +79,18 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (deviceConnected) {
-    Serial.println("Device connected");
+  if(!loopStarted) {
+    rgbStripStateCharacteristics.setValue("off");
+    rgbStripStateCharacteristics.notify();
+
+    rgbStripCurrentColorCharacteristics.setValue("225,0,0");
+    rgbStripCurrentColorCharacteristics.notify();
+    loopStarted = true;
   }
+
+  if (deviceConnected) {
+      
+  }
+
   delay(2000);
 }

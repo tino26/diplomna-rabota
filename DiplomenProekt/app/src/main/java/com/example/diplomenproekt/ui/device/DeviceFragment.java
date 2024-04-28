@@ -37,7 +37,7 @@ public class DeviceFragment extends Fragment {
         colorSeekBar.setOnColorChangeListener(new OnColorChangeListener() {
             @Override
             public void onColorChangeListener(int progress, int color) {
-                int currentRed = Color.red(color);
+                int currentRed = Color.red(color); 
                 int currentGreen = Color.green(color);
                 int currentBlue = Color.blue(color);
             }
