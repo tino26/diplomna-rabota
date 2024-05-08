@@ -18,6 +18,16 @@
     <!--    <color name="facebook_button_color">#3B5999</color>-->
     <color name="loading_overlay_color">#1A525050</color>
 
+    <color name="red">#ff0000</color>
+    <color name="orange">#ff7700</color>
+    <color name="yellow">#fff700</color>
+    <color name="green">#55ff00</color>
+    <color name="lime">#00ff9d</color>
+    <color name="light_blue">#00d0ff</color>
+    <color name="blue">#1500ff</color>
+    <color name="purple">#9500ff</color>
+    <color name="pink">#fb00ff</color>
+
     <array name="color_picker_slider_colors">
         <item>#ff0000</item>
         <item>#ff7700</item>

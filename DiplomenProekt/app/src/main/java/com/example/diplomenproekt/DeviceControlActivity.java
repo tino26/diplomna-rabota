@@ -205,14 +205,6 @@ public class DeviceControlActivity extends Activity {
         colorSeekBar.setOnColorChangeListener(new OnColorChangeListener() {
             @Override
             public void onColorChangeListener(int progress, int color) {
-                int currentRed = Color.red(color);
-                int currentGreen = Color.green(color);
-                int currentBlue = Color.blue(color);
-//                String outputColor = currentRed + "," + currentGreen + "," + currentBlue;
-//                int outputColor = currentRed;
-//                outputColor = (outputColor << 8) + currentGreen;
-//                outputColor = (outputColor << 8) + currentBlue;
-                byte[] bytes = ByteBuffer.allocate(4).putInt(color).array();
                 mBluetoothLeService.WriteCharacteristic(mColorCharacteristic, String.valueOf(color));
             }
         });

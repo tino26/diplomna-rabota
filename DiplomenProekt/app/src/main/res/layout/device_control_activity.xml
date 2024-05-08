@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="25dp"
-    tools:context=".ui.device.DeviceFragment">
+    android:padding="25dp">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -143,11 +142,23 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
     <GridLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@+id/topRow"
         tools:layout_editor_absoluteX="0dp">
+
+        <SeekBar
+            android:id="@+id/brightness_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+
+            android:progress="100"
+            android:max="100"
+            android:layout_marginBottom="10dp"
+            android:indeterminate="false" />
 
         <com.rtugeek.android.colorseekbar.ColorSeekBar
             android:id="@+id/color_seek_bar"
@@ -160,6 +171,55 @@
             app:colorSeekBarShowThumb="true"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="140dp" />
+
+        <GridView
+            android:id="@+id/color_preset_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="5">
+        </GridView>
+
+<!--        <ImageView-->
+<!--            android:id="@+id/red_preset_button"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:backgroundTint="@color/red"-->
+<!--            android:background="@drawable/color_preset" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/orange_preset_button"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:backgroundTint="@color/orange"-->
+<!--            android:background="@drawable/color_preset" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/yellow_preset_button"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:backgroundTint="@color/yellow"-->
+<!--            android:background="@drawable/color_preset" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/green_preset_button"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:backgroundTint="@color/green"-->
+<!--            android:background="@drawable/color_preset" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/blue_preset_button"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:backgroundTint="@color/blue"-->
+<!--            android:background="@drawable/color_preset" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/purple_preset_button"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:backgroundTint="@color/purple"-->
+<!--            android:background="@drawable/color_preset" />-->
 
     </GridLayout>
 

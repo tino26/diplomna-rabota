@@ -42,12 +42,10 @@ public class FindBLEdevice {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 0);
                 }
 
-                System.out.println(result.getDevice().getName());
-
-//                if(Objects.equals(result.getDevice().getName(), "ESP32 LightHouse")) {
+                if(result.getDevice().getName().equals("ESP32 LightHouse")) {
                     leDeviceListAdapter.addDevice(result.getDevice());
                     leDeviceListAdapter.notifyDataSetChanged();
-//                }
+                }
             }
         };
         if (!scanning) {
@@ -66,8 +64,8 @@ public class FindBLEdevice {
             scanning = true;
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 0);
-
             }
+
             bluetoothLeScanner.startScan(leScanCallback);
         } else {
             scanning = false;

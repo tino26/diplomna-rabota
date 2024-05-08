@@ -10,6 +10,8 @@ import com.example.diplomenproekt.AuthActivity;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,14 +38,15 @@ public class UserSessionManager {
         this.editor.putString("name", paramString1);
         this.editor.putString("email", paramString2);
         this.editor.putLong("session_timeout", loggedInTime.getTime() + 60*1000);
+        this.editor.putStringSet("device_addresses", new HashSet<String>());
         this.editor.commit();
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                logoutUser();
-            }
-        }, 60*1000);
+//        new Timer().schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                logoutUser();
+//            }
+//        }, 60*1000);
 
     }
 
@@ -53,6 +56,20 @@ public class UserSessionManager {
         localHashMap.put("name", this.pref.getString("name", null));
         localHashMap.put("email", this.pref.getString("email", null));
         return localHashMap;
+    }
+
+    public HashSet<String> getDeviceAddresses() {
+        return (HashSet<String>) this.pref.getStringSet("device_addresses", new HashSet<String>());
+    }
+
+    public boolean updateDeviceAddresses(HashSet<String> newAddresses) {
+        HashSet<String> newDeviceAddList = getDeviceAddresses();
+        if(!newDeviceAddList.addAll(newAddresses)){
+            return false;
+        }
+        this.editor.putStringSet("device_addresses", newDeviceAddList);
+        this.editor.commit();
+        return true;
     }
 
     public Long currentSessionTimeout() { return this.pref.getLong("session_timeout", 0); }
