@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.diplomenproekt.bluetooth.BluetoothLeService;
 import com.example.diplomenproekt.bluetooth.SampleGattAttributes;
+import com.example.diplomenproekt.ui.device.ColorPresetAdapter;
 import com.rtugeek.android.colorseekbar.ColorSeekBar;
 import com.rtugeek.android.colorseekbar.OnColorChangeListener;
 
@@ -162,17 +165,26 @@ public class DeviceControlActivity extends Activity {
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    String stateVal = mStateCharacteristic.getStringValue(0);
-//                    String newValue = "";
-//                    if(stateVal.equals("off")){
-//                        stateVal = "on";
-//                    }else if(stateVal.equals("on")){
-//                        stateVal = "off";
-//                    }
-//                    mBluetoothLeService.WriteCharacteristic(mStateCharacteristic, stateVal);
-//                    Log.d("CharacteristicsList", mStateCharacteristic.getStringValue(0));
+                    String stateVal = mStateCharacteristic.getStringValue(0);
+                    if(stateVal == null) {
+                        stateVal = "off";
+                    }
+                    if(stateVal.equals("off")){
+                        stateVal = "on";
+                    }else if(stateVal.equals("on")){
+                        stateVal = "off";
+                    }
+                    mBluetoothLeService.WriteCharacteristic(mStateCharacteristic, String.valueOf(stateVal));
                 }
             };
+
+    public final View.OnClickListener presetColorClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), DeviceControlActivity.class);
+                mBluetoothLeService.WriteCharacteristic(mColorCharacteristic, String.valueOf(((ColorDrawable) view.getBackground()).getColor()));
+            }
+    };
 
     private void clearUI() {
         mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
@@ -197,21 +209,25 @@ public class DeviceControlActivity extends Activity {
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
+
         ImageButton powerButton = (ImageButton) findViewById(R.id.device_power_button);
         powerButton.setOnClickListener(powerButtonClickListener);
 
         ColorSeekBar colorSeekBar = findViewById(R.id.color_seek_bar);
 
+        int[] presetColors = getResources().getIntArray(R.array.preset_color_array);
+        ArrayList<Integer> colorPresetList = new ArrayList<Integer>();
+
+        for(int preset : presetColors) {
+            colorPresetList.add(preset);
+        }
+
+        GridView colorPresetGrid = (GridView) findViewById(R.id.color_preset_grid);
+        colorPresetGrid.setAdapter(new ColorPresetAdapter(getApplicationContext(), colorPresetList, presetColorClick));
+
         colorSeekBar.setOnColorChangeListener(new OnColorChangeListener() {
             @Override
             public void onColorChangeListener(int progress, int color) {
-                int currentRed = Color.red(color);
-                int currentGreen = Color.green(color);
-                int currentBlue = Color.blue(color);
-//                String outputColor = currentRed + "," + currentGreen + "," + currentBlue;
-//                int outputColor = currentRed;
-//                outputColor = (outputColor << 8) + currentGreen;
-//                outputColor = (outputColor << 8) + currentBlue;
                 byte[] bytes = ByteBuffer.allocate(4).putInt(color).array();
                 mBluetoothLeService.WriteCharacteristic(mColorCharacteristic, String.valueOf(color));
             }
@@ -224,6 +240,7 @@ public class DeviceControlActivity extends Activity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();

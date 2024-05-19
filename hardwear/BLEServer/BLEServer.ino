@@ -14,6 +14,7 @@
 #define RED_PIN 19
 #define GREEN_PIN 21
 #define BLUE_PIN 18
+#define STATE_PIN 15
 
 // SET_LOOP_TASK_STACK_SIZE(12*1024);
 
@@ -59,12 +60,12 @@ class StateCharacteristicCallBack: public BLECharacteristicCallbacks
   void onWrite(BLECharacteristic *characteristic_)
   {
     Serial.println("Write char data is received"); 
-    BLECharacteristic charac = *characteristic_;
-    String state = charac.getValue().c_str();
+    String state = String(characteristic_->getValue().c_str());
+    Serial.println(state);
     if(String(state).equals(String("on"))) {
-      rgbStripState = true;
+      digitalWrite(STATE_PIN, HIGH);
     }else {
-      rgbStripState = false;
+      digitalWrite(STATE_PIN, LOW);
     }
   }
 
@@ -141,6 +142,7 @@ void setup() {
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
+  pinMode(STATE_PIN, OUTPUT);
 
   Serial.begin(115200);
   Serial.println("Starting BLE work!");
@@ -157,6 +159,7 @@ void setup() {
   rgbStripStateCharacteristics.setCallbacks(new StateCharacteristicCallBack());
   // bmeHumidityCharacteristics.addDescriptor(new BLE2902());
   rgbStripStateCharacteristics.addDescriptor(&rgbStripStateDescriptor);
+
 
   //COLOR
   pService->addCharacteristic(&rgbStripCurrentColorCharacteristics);
@@ -180,7 +183,6 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if(!loopStarted) {
-    rgbStripStateCharacteristics.setValue("off");
     rgbStripStateCharacteristics.notify();
 
     rgbStripCurrentColorCharacteristics.setValue("16711680");
@@ -189,6 +191,7 @@ void loop() {
     analogWrite(RED_PIN, red_value);
     analogWrite(GREEN_PIN, green_value);
     analogWrite(BLUE_PIN, blue_value);
+    digitalWrite(STATE_PIN, HIGH);
     loopStarted = true;
   }
 
