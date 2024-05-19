@@ -23,10 +23,8 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
 import com.example.diplomenproekt.DeviceControlActivity;
-import com.example.diplomenproekt.authentication.UserSessionManager;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +34,6 @@ import java.util.UUID;
  */
 public class BluetoothLeService extends Service {
     private final static String TAG = BluetoothLeService.class.getSimpleName();
-    UserSessionManager session;
 
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
@@ -72,12 +69,6 @@ public class BluetoothLeService extends Service {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
-
-                //save device to user session
-                HashSet<String> addressHash = new HashSet<String>();
-                addressHash.add(mBluetoothGatt.getDevice().getAddress());
-                session.updateDeviceAddresses(addressHash);
-
                 broadcastUpdate(intentAction);
                 Log.d(TAG, "Connected to GATT server.");
                 // Attempts to discover services after successful connection.

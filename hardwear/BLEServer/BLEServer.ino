@@ -26,6 +26,8 @@ BLECharacteristic rgbStripStateCharacteristics(CHARACTERISTIC_STATE_UUID, BLECha
                                                                           BLECharacteristic::PROPERTY_NOTIFY |
                                                                           BLECharacteristic::PROPERTY_WRITE_NR);
 BLEDescriptor rgbStripStateDescriptor(BLEUUID((uint16_t)0x2903));
+// BleMidiCharacteristicCallbacks *pBleMidiCallbacks = new BleMidiCharacteristicCallbacks();
+
 BLECharacteristic rgbStripCurrentColorCharacteristics(CHARACTERISTIC_CURRENT_COLOR_UUID, BLECharacteristic::PROPERTY_READ   |
                                                                                           BLECharacteristic::PROPERTY_NOTIFY |
                                                                                           BLECharacteristic::PROPERTY_WRITE_NR);
@@ -77,6 +79,15 @@ class ColorCharacteristicCallBack: public BLECharacteristicCallbacks
   //This method not called
   void onWrite(BLECharacteristic *characteristic_)
   {
+    Serial.println("Write char data is received"); 
+    // BLECharacteristic charac = *characteristic_;
+    // char* colors[3];
+    // BLECharacteristic charac = *characteristic_;
+    // int   ArrayLength  = charac.getValue().length()+1;
+    // char input[ArrayLength] = {};
+    // strcpy(input, charac.getValue().c_str());
+
+    // Serial.println(charac.getData(), BYTE);
     int color = String(characteristic_->getValue().c_str()).toInt();
     Serial.println(color);
 
@@ -84,13 +95,32 @@ class ColorCharacteristicCallBack: public BLECharacteristicCallbacks
     green_value = (color >> 8) & 0xFF;
     blue_value = color & 0xFF;
 
+    // char *ptr = NULL;
+    // byte index = 0;
+
+    // ptr = strtok(input, ",");
+    
+    // while (ptr != NULL)
+    // {
+    //   colors[index] = ptr;
+    //   index++;
+    //   ptr = strtok(NULL, ",");
+    // }
+
+    // red_value = String(colors[0]).toInt();
     analogWrite(RED_PIN, red_value);
+    // green_value = String(colors[1]).toInt();
     analogWrite(GREEN_PIN, green_value);
+    // blue_value = String(colors[2]).toInt();
     analogWrite(BLUE_PIN, blue_value);
+
+    // free(ptr);
+    // free(colors);
   }
 
   void onRead(BLECharacteristic *characteristic_)
   {
+    Serial.println("Read characteristic data"); 
   }
 };
 
@@ -125,6 +155,7 @@ void setup() {
   pService->addCharacteristic(&rgbStripStateCharacteristics);
   rgbStripStateDescriptor.setValue("Current State");
   rgbStripStateCharacteristics.setCallbacks(new StateCharacteristicCallBack());
+  // bmeHumidityCharacteristics.addDescriptor(new BLE2902());
   rgbStripStateCharacteristics.addDescriptor(&rgbStripStateDescriptor);
 
   //COLOR
