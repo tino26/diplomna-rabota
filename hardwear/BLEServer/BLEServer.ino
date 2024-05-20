@@ -22,6 +22,7 @@
 #define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_STATE_UUID "93758842-6624-49aa-a286-abdfff1f4efa"
 #define CHARACTERISTIC_CURRENT_COLOR_UUID "8c25e317-ac1a-47ee-bedc-53c6241487c2"
+#define CHARACTERISTIC_BRIGHTNESS_UUID "69a5a500-de3a-4da4-a561-74579f1905ff"
 
 BLECharacteristic rgbStripStateCharacteristics(CHARACTERISTIC_STATE_UUID, BLECharacteristic::PROPERTY_READ   |
                                                                           BLECharacteristic::PROPERTY_NOTIFY |
@@ -33,6 +34,11 @@ BLECharacteristic rgbStripCurrentColorCharacteristics(CHARACTERISTIC_CURRENT_COL
                                                                                           BLECharacteristic::PROPERTY_NOTIFY |
                                                                                           BLECharacteristic::PROPERTY_WRITE_NR);
 BLEDescriptor rgbStripCurrentColorDescriptor(BLEUUID((uint16_t)0x2903));
+
+BLECharacteristic rgbStripBrightnessCharacteristics(CHARACTERISTIC_BRIGHTNESS_UUID, BLECharacteristic::PROPERTY_READ   |
+                                                                                          BLECharacteristic::PROPERTY_NOTIFY |
+                                                                                          BLECharacteristic::PROPERTY_WRITE_NR);
+BLEDescriptor rgbStripBrightnessDescriptor(BLEUUID((uint16_t)0x2903));
 
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
@@ -77,18 +83,9 @@ class StateCharacteristicCallBack: public BLECharacteristicCallbacks
 
 class ColorCharacteristicCallBack: public BLECharacteristicCallbacks
 {
-  //This method not called
   void onWrite(BLECharacteristic *characteristic_)
   {
     Serial.println("Write char data is received"); 
-    // BLECharacteristic charac = *characteristic_;
-    // char* colors[3];
-    // BLECharacteristic charac = *characteristic_;
-    // int   ArrayLength  = charac.getValue().length()+1;
-    // char input[ArrayLength] = {};
-    // strcpy(input, charac.getValue().c_str());
-
-    // Serial.println(charac.getData(), BYTE);
     int color = String(characteristic_->getValue().c_str()).toInt();
     Serial.println(color);
 
@@ -96,27 +93,28 @@ class ColorCharacteristicCallBack: public BLECharacteristicCallbacks
     green_value = (color >> 8) & 0xFF;
     blue_value = color & 0xFF;
 
-    // char *ptr = NULL;
-    // byte index = 0;
-
-    // ptr = strtok(input, ",");
-    
-    // while (ptr != NULL)
-    // {
-    //   colors[index] = ptr;
-    //   index++;
-    //   ptr = strtok(NULL, ",");
-    // }
-
-    // red_value = String(colors[0]).toInt();
     analogWrite(RED_PIN, red_value);
-    // green_value = String(colors[1]).toInt();
     analogWrite(GREEN_PIN, green_value);
-    // blue_value = String(colors[2]).toInt();
     analogWrite(BLUE_PIN, blue_value);
+  }
 
-    // free(ptr);
-    // free(colors);
+  void onRead(BLECharacteristic *characteristic_)
+  {
+    Serial.println("Read characteristic data"); 
+  }
+};
+
+class BrightnessCharacteristicCallBack: public BLECharacteristicCallbacks
+{
+  void onWrite(BLECharacteristic *characteristic_)
+  {
+    Serial.println("Write char data is received"); 
+    int brightness = String(characteristic_->getValue().c_str()).toInt();
+    Serial.println(brightness);
+
+    analogWrite(RED_PIN, red_value*brightness/100);
+    analogWrite(GREEN_PIN, green_value*brightness/100);
+    analogWrite(BLUE_PIN, blue_value*brightness/100);
   }
 
   void onRead(BLECharacteristic *characteristic_)
@@ -168,6 +166,14 @@ void setup() {
   // bmeHumidityCharacteristics.addDescriptor(new BLE2902());
   rgbStripCurrentColorCharacteristics.addDescriptor(&rgbStripCurrentColorDescriptor);
 
+  //BRIGHTNESS
+  pService->addCharacteristic(&rgbStripBrightnessCharacteristics);
+  rgbStripBrightnessDescriptor.setValue("Current Brightness");
+  rgbStripBrightnessCharacteristics.setCallbacks(new BrightnessCharacteristicCallBack());
+  // bmeHumidityCharacteristics.addDescriptor(new BLE2902());
+  rgbStripBrightnessCharacteristics.addDescriptor(&rgbStripBrightnessDescriptor);
+
+
   pService->start();
   // BLEAdvertising *pAdvertising = pServer->getAdvertising();  // this still is working for backward compatibility
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
@@ -185,8 +191,14 @@ void loop() {
   if(!loopStarted) {
     rgbStripStateCharacteristics.notify();
 
+    rgbStripStateCharacteristics.setValue("off");
+    rgbStripStateCharacteristics.notify();
+
     rgbStripCurrentColorCharacteristics.setValue("16711680");
     rgbStripCurrentColorCharacteristics.notify();
+
+    rgbStripBrightnessCharacteristics.setValue("100");
+    rgbStripBrightnessCharacteristics.notify();
 
     analogWrite(RED_PIN, red_value);
     analogWrite(GREEN_PIN, green_value);

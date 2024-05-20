@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
@@ -66,6 +67,8 @@ public class DeviceControlActivity extends Activity {
 
     private BluetoothGattCharacteristic mStateCharacteristic;
     private BluetoothGattCharacteristic mColorCharacteristic;
+    private BluetoothGattCharacteristic mBrightnessCharacteristic;
+
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -74,6 +77,8 @@ public class DeviceControlActivity extends Activity {
             UUID.fromString(SampleGattAttributes.LIGHTSOURCE_STATE);
     public final static UUID LIGHTSOURCE_COLOR =
             UUID.fromString(SampleGattAttributes.LIGHTSOURCE_COLOR);
+    public final static UUID LIGHTSOURCE_BRIGHTNESS =
+            UUID.fromString(SampleGattAttributes.LIGHTSOURCE_BRIGHTNESS);
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -213,23 +218,41 @@ public class DeviceControlActivity extends Activity {
         ImageButton powerButton = (ImageButton) findViewById(R.id.device_power_button);
         powerButton.setOnClickListener(powerButtonClickListener);
 
-        ColorSeekBar colorSeekBar = findViewById(R.id.color_seek_bar);
-
         int[] presetColors = getResources().getIntArray(R.array.preset_color_array);
         ArrayList<Integer> colorPresetList = new ArrayList<Integer>();
-
         for(int preset : presetColors) {
             colorPresetList.add(preset);
         }
-
         GridView colorPresetGrid = (GridView) findViewById(R.id.color_preset_grid);
         colorPresetGrid.setAdapter(new ColorPresetAdapter(getApplicationContext(), colorPresetList, presetColorClick));
+
+        ColorSeekBar colorSeekBar = findViewById(R.id.color_seek_bar);
 
         colorSeekBar.setOnColorChangeListener(new OnColorChangeListener() {
             @Override
             public void onColorChangeListener(int progress, int color) {
                 byte[] bytes = ByteBuffer.allocate(4).putInt(color).array();
                 mBluetoothLeService.WriteCharacteristic(mColorCharacteristic, String.valueOf(color));
+            }
+        });
+
+        SeekBar brightnessBar = (SeekBar) findViewById(R.id.brightness_seek_bar);
+
+        brightnessBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+                mBluetoothLeService.WriteCharacteristic(mBrightnessCharacteristic, String.valueOf(progress));
             }
         });
 
@@ -347,6 +370,10 @@ public class DeviceControlActivity extends Activity {
 
                 if(gattCharacteristic.getUuid().equals(LIGHTSOURCE_COLOR)){
                     mColorCharacteristic = gattCharacteristic;
+                }
+
+                if(gattCharacteristic.getUuid().equals(LIGHTSOURCE_BRIGHTNESS)){
+                    mBrightnessCharacteristic = gattCharacteristic;
                 }
 
                 charas.add(gattCharacteristic);
